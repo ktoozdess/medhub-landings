@@ -1,0 +1,189 @@
+---
+import BlogLayout from '../../../layouts/BlogLayout.astro';
+import HeroScreencast from '../../../components/HeroScreencast.astro';
+import BentoMotion from '../../../components/BentoMotion.astro';
+import CssTabSwitcher from '../../../components/CssTabSwitcher.astro';
+
+import {
+  LOCALES,
+  LANDINGS,
+  UI_CHROME,
+  type Locale,
+  type LandingCopy,
+} from '../../../data/landings';
+import { BENTO_EXTRAS } from '../../../data/bento-extras';
+
+export function getStaticPaths() {
+  const paths: Array<{
+    params: { locale: Locale; slug: string };
+    props: { data: LandingCopy };
+  }> = [];
+
+  for (const locale of LOCALES) {
+    for (const data of LANDINGS[locale]) {
+      paths.push({
+        params: { locale, slug: data.slug },
+        props: { data },
+      });
+    }
+  }
+  return paths;
+}
+
+const { locale } = Astro.params as { locale: Locale; slug: string };
+const { data } = Astro.props as { data: LandingCopy };
+
+const ui = UI_CHROME[locale];
+const extras = BENTO_EXTRAS[locale][data.slug];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: data.faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+---
+
+<BlogLayout
+  locale={locale}
+  title={data.seoTitle}
+  description={data.seoDescription}
+  currentPathSuffix={`/blog/${data.slug}`}
+>
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+  <!-- 1. HERO + ВЕБ-СКРИНКАСТ С КУРСОРОМ -->
+  <section class="hero-section">
+    <div class="hero-rings" aria-hidden="true">
+      <span class="hero-ring"></span>
+      <span class="hero-ring"></span>
+      <span class="hero-ring"></span>
+    </div>
+
+    <div class="container hero-grid">
+      <div>
+        <span class="micro-label">{data.microLabel}</span>
+        <h1 class="display-h1">{data.heroTitle}</h1>
+        <p class="lead-text">{data.heroSubtitle}</p>
+
+        <div class="trust-row">
+          <span class="star-gold">★</span>
+          <span>{data.trustText}</span>
+        </div>
+        <div>
+          <a class="hero-anchor" href="#how-it-works">
+            {data.heroAnchor} ↓
+          </a>
+        </div>
+      </div>
+
+      <HeroScreencast
+        locale={locale}
+        title={data.motionCard.title}
+        tabA={data.motionCard.tabA}
+        tabB={data.motionCard.tabB}
+        typingQuery={data.motionCard.typingQuery}
+        searchBtn={data.motionCard.searchBtn}
+        rows={data.motionCard.sampleRows}
+      />
+    </div>
+  </section>
+
+  <!-- 2. БЛОК ЦЕННОСТИ + АНИМИРОВАННЫЕ 5 ЗВЁЗД -->
+  <section class="section-white">
+    <div class="container split-row">
+      <div>
+        <span class="micro-label">{data.valueSection.microLabel}</span>
+        <h2 class="section-h2">{data.valueSection.title}</h2>
+        <p class="lead-text">{data.valueSection.text}</p>
+        <a class="btn-primary" href={`/${locale}${data.valueSection.ctaHrefSuffix}`}>
+          <span>{data.valueSection.cta}</span>
+          <span class="arrow">→</span>
+        </a>
+      </div>
+
+      <div class="review-showcase">
+        <span class="micro-label" style="margin-bottom: 4px;">{ui.reviewsBadge}</span>
+        <div class="stars-wave" aria-label="5 out of 5 stars">
+          <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+        </div>
+        <p style="margin: 0 auto; max-width: 34ch; font-weight: 500; font-size: 0.98rem;">
+          {data.valueSection.reviewQuote}
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. ЖИВОЙ BENTO + БЕСКОНЕЧНАЯ ЛЕНТА ОТЗЫВОВ -->
+  <BentoMotion
+    microLabel={data.stepsSection.microLabel}
+    title={data.stepsSection.title}
+    cards={data.stepsSection.cards}
+    visualLabels={extras.visualLabels}
+    marqueeItems={extras.marqueeItems}
+  />
+
+  <!-- 4. ИНТЕРАКТИВНЫЕ ВКЛАДКИ БЕЗ JS -->
+  <CssTabSwitcher
+    groupId={`tabs-${locale}-${data.slug}`}
+    microLabel={extras.tabsSection.microLabel}
+    title={extras.tabsSection.title}
+    tabs={extras.tabsSection.tabs}
+  />
+
+  <!-- 5. БЛОК СРАВНЕНИЯ -->
+  <section class="section-white">
+    <div class="container">
+      <span class="micro-label">{data.comparisonSection.microLabel}</span>
+      <h2 class="section-h2">{data.comparisonSection.title}</h2>
+
+      <div class="insight-grid">
+        {data.comparisonSection.boxes.map((box) => (
+          <div class="insight-box">
+            <h3>{box.title}</h3>
+            <p style="margin: 0; font-size: 0.92rem; color: var(--ink-secondary);">{box.desc}</p>
+            <ul class="check-list">
+              {box.points.map((pt) => (
+                <li>{pt}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. FAQ НА NATIVE <details> -->
+  <section class="section-white">
+    <div class="container" style="max-width: 860px;">
+      <span class="micro-label">FAQ</span>
+      <h2 class="section-h2">{ui.faqTitle}</h2>
+
+      <div class="faq-list">
+        {data.faqs.map((faq, index) => (
+          <details class="faq-item" open={index === 0}>
+            <summary>{faq.q}</summary>
+            <p>{faq.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. НИЖНИЙ БАННЕР -->
+  <section class="cta-banner">
+    <div class="container cta-banner-inner">
+      <div>
+        <span class="micro-label">{data.bottomCta.microLabel}</span>
+        <h2 class="section-h2" style="margin-bottom: 0;">{data.bottomCta.title}</h2>
+      </div>
+      <a class="btn-primary" href={`/${locale}/specialists`}>
+        <span>{data.bottomCta.btn}</span>
+        <span class="arrow">→</span>
+      </a>
+    </div>
+  </section>
+</BlogLayout>

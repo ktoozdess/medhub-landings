@@ -1,0 +1,55 @@
+---
+import BlogLayout from '../../../layouts/BlogLayout.astro';
+import { LOCALES, LANDINGS, UI_CHROME, type Locale } from '../../../data/landings';
+
+export function getStaticPaths() {
+  return LOCALES.map((locale) => ({ params: { locale } }));
+}
+
+const { locale } = Astro.params as { locale: Locale };
+const ui = UI_CHROME[locale];
+const items = LANDINGS[locale];
+---
+
+<BlogLayout
+  locale={locale}
+  title={`${ui.nav.blog} | Medhub`}
+  description={ui.blogIndexSubtitle}
+  currentPathSuffix="/blog"
+>
+  <section class="hero-section">
+    <div class="hero-rings" aria-hidden="true">
+      <span class="hero-ring"></span>
+      <span class="hero-ring"></span>
+      <span class="hero-ring"></span>
+    </div>
+    <div class="container" style="position: relative; z-index: 2;">
+      <span class="micro-label">MEDHUB {ui.nav.blog}</span>
+      <h1 class="display-h1" style="max-width: 16ch;">{ui.blogIndexTitle}</h1>
+      <p class="lead-text">{ui.blogIndexSubtitle}</p>
+    </div>
+  </section>
+
+  <section class="section-white">
+    <div class="container">
+      <div class="cards-3" style="margin-top: 0;">
+        {items.map((item, idx) => (
+          <a href={`/${locale}/blog/${item.slug}`} class="step-card">
+            <div>
+              <div class="card-top">
+                <span class="icon-box">✦</span>
+                <span class="card-num">0{idx + 1}</span>
+              </div>
+              <span class="micro-label" style="margin-bottom: 8px;">{item.microLabel}</span>
+              <h3>{item.heroTitle}</h3>
+              <p>{item.heroSubtitle}</p>
+            </div>
+            <div style="margin-top: 22px; font-weight: 600; font-size: 0.88rem;">
+              {ui.readGuide} →
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</BlogLayout>

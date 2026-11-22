@@ -1,0 +1,77 @@
+---
+interface TabPanel {
+  id: string;
+  label: string;
+  headline: string;
+  desc: string;
+  metrics: string[];
+}
+
+interface Props {
+  groupId: string;
+  microLabel: string;
+  title: string;
+  tabs: TabPanel[];
+}
+
+const { groupId, microLabel, title, tabs } = Astro.props;
+---
+
+<section class="section-white">
+  <div class="container">
+    <span class="micro-label">{microLabel}</span>
+    <h2 class="section-h2">{title}</h2>
+
+    <div class="css-tabs-shell">
+      {tabs.map((_, idx) => (
+        <input
+          type="radio"
+          name={groupId}
+          id={`${groupId}-${idx}`}
+          class={`tab-radio tab-radio-${idx}`}
+          checked={idx === 0}
+        />
+      ))}
+
+      <div class="tab-nav">
+        {tabs.map((tab, idx) => (
+          <label for={`${groupId}-${idx}`} class={`tab-pill tab-pill-${idx}`}>
+            {tab.label}
+          </label>
+        ))}
+      </div>
+
+      <div class="tab-panels">
+        {tabs.map((tab, idx) => (
+          <div class={`tab-panel tab-panel-${idx}`}>
+            <div>
+              <h3>{tab.headline}</h3>
+              <p>{tab.desc}</p>
+            </div>
+            <ul class="check-list">
+              {tab.metrics.map((m) => <li>{m}</li>)}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .css-tabs-shell { margin-top: 26px; border: 1px solid var(--border-subtle); border-radius: 20px; padding: 24px; background: #fafaf9; }
+  .tab-radio { display: none; }
+  .tab-nav { display: inline-flex; flex-wrap: wrap; gap: 8px; background: #eeeeea; padding: 5px; border-radius: 12px; margin-bottom: 22px; }
+  .tab-pill { cursor: pointer; padding: 8px 16px; border-radius: 9px; font-size: 0.86rem; font-weight: 600; color: var(--ink-secondary); transition: background 0.2s, color 0.2s; }
+  .tab-panel { display: none; grid-template-columns: 1.2fr 0.8fr; gap: 28px; background: #fff; border: 1px solid var(--border-subtle); border-radius: 16px; padding: 24px; animation: panel-fade 0.3s ease; }
+  .tab-panel h3 { margin: 0 0 8px; font-size: 1.2rem; letter-spacing: -0.02em; }
+  .tab-panel p { margin: 0; color: var(--ink-secondary); font-size: 0.94rem; }
+  .tab-radio-0:checked ~ .tab-nav .tab-pill-0,
+  .tab-radio-1:checked ~ .tab-nav .tab-pill-1,
+  .tab-radio-2:checked ~ .tab-nav .tab-pill-2 { background: #0b0b0b; color: #fff; }
+  .tab-radio-0:checked ~ .tab-panels .tab-panel-0,
+  .tab-radio-1:checked ~ .tab-panels .tab-panel-1,
+  .tab-radio-2:checked ~ .tab-panels .tab-panel-2 { display: grid; }
+  @keyframes panel-fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  @media (max-width: 820px) { .tab-panel { grid-template-columns: 1fr; } }
+</style>
