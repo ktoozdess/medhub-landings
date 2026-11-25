@@ -1,0 +1,357 @@
+---
+import type { Locale, LandingCopy } from '../../data/landings';
+import type { BentoExtras } from '../../data/bento-extras';
+import { GIFT_CHROME } from '../../data/gift-chrome';
+import { UI_CHROME } from '../../data/landings';
+
+interface Props {
+  locale: Locale;
+  data: LandingCopy;
+  extras: BentoExtras;
+}
+
+const { locale, data, extras } = Astro.props;
+const ui = UI_CHROME[locale];
+const chrome = GIFT_CHROME[locale].visit;
+const doctor = data.motionCard.sampleRows[0];
+---
+
+<section class="gv-hero">
+  <div class="container gv-hero-grid">
+    <div>
+      <span class="micro-label">{data.microLabel}</span>
+      <h1 class="display-h1">{data.heroTitle}</h1>
+      <p class="lead-text">{data.heroSubtitle}</p>
+      <div class="trust-row">
+        <span class="star-gold">★</span>
+        <span>{data.trustText}</span>
+      </div>
+      <a class="btn-primary" href={`/${locale}${data.valueSection.ctaHrefSuffix}`}>
+        <span>{data.valueSection.cta}</span>
+        <span class="arrow">→</span>
+      </a>
+    </div>
+
+    <aside class="gv-pick" aria-label={chrome.cardEyebrow}>
+      <p class="gv-serial">{chrome.cardEyebrow}</p>
+      <p class="gv-offer">{doctor?.name}</p>
+      <p class="gv-meta">{doctor?.meta}</p>
+      <p class="gv-stars">{doctor?.rating}</p>
+      <dl>
+        <div>
+          <dt>{chrome.cardFor}</dt>
+          <dd>{chrome.cardName}</dd>
+        </div>
+        <div>
+          <dt>{chrome.cardFrom}</dt>
+          <dd>{chrome.cardGiver}</dd>
+        </div>
+      </dl>
+      <p class="gv-valid">{chrome.cardNote}</p>
+    </aside>
+  </div>
+</section>
+
+<section class="gv-quote">
+  <div class="container">
+    <blockquote>
+      <p>{data.valueSection.reviewQuote}</p>
+      <cite>{ui.reviewsBadge}</cite>
+    </blockquote>
+  </div>
+</section>
+
+<section id="how-it-works" class="section-white gv-timeline-wrap">
+  <div class="container">
+    <span class="micro-label">{data.stepsSection.microLabel}</span>
+    <h2 class="section-h2">{data.stepsSection.title}</h2>
+    <ol class="gv-timeline">
+      {data.stepsSection.cards.map((card) => (
+        <li>
+          <span class="gv-num">{card.num}</span>
+          <div>
+            <h3>{card.title}</h3>
+            <p>{card.desc}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<section class="gv-who">
+  <div class="container">
+    <span class="micro-label">{chrome.whoLabel}</span>
+    <h2 class="section-h2">{extras.tabsSection.title}</h2>
+    <div class="gv-who-list">
+      {extras.tabsSection.tabs.map((tab, idx) => (
+        <article>
+          <span>0{idx + 1}</span>
+          <div>
+            <h3>{tab.headline}</h3>
+            <p>{tab.desc}</p>
+            <ul class="check-list">
+              {tab.metrics.map((m) => <li>{m}</li>)}
+            </ul>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section class="section-white">
+  <div class="container">
+    <span class="micro-label">{data.comparisonSection.microLabel}</span>
+    <h2 class="section-h2">{data.comparisonSection.title}</h2>
+    <div class="gv-pair">
+      {data.comparisonSection.boxes.map((box, idx) => (
+        <article class={idx === 0 ? 'is-gold' : ''}>
+          <h3>{box.title}</h3>
+          <p>{box.desc}</p>
+          <ul class="check-list">
+            {box.points.map((pt) => <li>{pt}</li>)}
+          </ul>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section class="section-white">
+  <div class="container" style="max-width: 860px;">
+    <span class="micro-label">FAQ</span>
+    <h2 class="section-h2">{ui.faqTitle}</h2>
+    <div class="faq-list">
+      {data.faqs.map((faq, index) => (
+        <details class="faq-item" open={index === 0}>
+          <summary>{faq.q}</summary>
+          <p>{faq.a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section class="cta-banner">
+  <div class="container cta-banner-inner">
+    <div>
+      <span class="micro-label">{data.bottomCta.microLabel}</span>
+      <h2 class="section-h2" style="margin-bottom: 0;">{data.bottomCta.title}</h2>
+    </div>
+    <a class="btn-primary" href={`/${locale}${data.valueSection.ctaHrefSuffix}`}>
+      <span>{data.bottomCta.btn}</span>
+      <span class="arrow">→</span>
+    </a>
+  </div>
+</section>
+
+<style>
+  .gv-hero {
+    background: #f7f7f5;
+    padding: 72px 0 88px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .gv-hero-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 48px;
+    align-items: center;
+  }
+  .gv-pick {
+    background: #fff;
+    border: 1px solid var(--border-subtle);
+    border-radius: 18px;
+    padding: 28px;
+    box-shadow: var(--shadow-float);
+  }
+  .gv-serial {
+    margin: 0 0 14px;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    font-weight: 600;
+  }
+  .gv-offer {
+    margin: 0 0 6px;
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+  }
+  .gv-meta {
+    margin: 0 0 6px;
+    font-size: 0.9rem;
+    color: var(--ink-secondary);
+  }
+  .gv-stars {
+    margin: 0 0 18px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--accent-gold);
+  }
+  .gv-pick dl {
+    margin: 0 0 16px;
+    display: grid;
+    gap: 10px;
+  }
+  .gv-pick dt {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-muted);
+  }
+  .gv-pick dd {
+    margin: 2px 0 0;
+    font-weight: 600;
+  }
+  .gv-valid {
+    margin: 0;
+    padding-top: 14px;
+    border-top: 1px solid var(--border-subtle);
+    font-size: 0.86rem;
+    color: var(--ink-secondary);
+    line-height: 1.5;
+  }
+  .gv-quote {
+    background: #0b0b0b;
+    color: #fff;
+    padding: 56px 0;
+  }
+  .gv-quote blockquote {
+    margin: 0;
+    max-width: 28ch;
+  }
+  .gv-quote p {
+    margin: 0 0 16px;
+    font-size: clamp(1.4rem, 2.4vw, 2rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+  }
+  .gv-quote cite {
+    font-style: normal;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #d4a843;
+  }
+  .gv-timeline-wrap {
+    padding: 80px 0;
+  }
+  .gv-timeline {
+    list-style: none;
+    margin: 40px 0 0;
+    padding: 0;
+    max-width: 720px;
+  }
+  .gv-timeline li {
+    position: relative;
+    margin-left: 19px;
+    padding: 4px 0 44px 56px;
+    border-left: 1px solid var(--border-subtle);
+  }
+  .gv-timeline li:last-child {
+    padding-bottom: 0;
+    border-left-color: transparent;
+  }
+  .gv-num {
+    position: absolute;
+    left: -19px;
+    top: 0;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #0b0b0b;
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+  .gv-timeline h3 {
+    margin: 4px 0 12px;
+    font-size: clamp(1.2rem, 2vw, 1.4rem);
+    font-weight: 650;
+    letter-spacing: -0.03em;
+    line-height: 1.3;
+  }
+  .gv-timeline p {
+    margin: 0;
+    color: var(--ink-secondary);
+    font-size: 1.05rem;
+    line-height: 1.7;
+    max-width: 52ch;
+  }
+  .gv-who {
+    background: #fafaf9;
+    padding: 72px 0;
+    border-top: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .gv-who-list {
+    display: grid;
+    gap: 16px;
+    margin-top: 28px;
+  }
+  .gv-who-list article {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 18px;
+    background: #fff;
+    border: 1px solid var(--border-subtle);
+    border-radius: 18px;
+    padding: 22px 24px;
+  }
+  .gv-who-list article > span {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent-gold);
+  }
+  .gv-who-list h3 {
+    margin: 0 0 8px;
+    font-size: 1.12rem;
+  }
+  .gv-who-list p {
+    margin: 0 0 12px;
+    color: var(--ink-secondary);
+    font-size: 0.92rem;
+  }
+  .gv-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 28px;
+  }
+  .gv-pair article {
+    border: 1px solid var(--border-subtle);
+    border-radius: 18px;
+    padding: 26px;
+    background: #fff;
+  }
+  .gv-pair article.is-gold {
+    background: #0b0b0b;
+    color: #fff;
+    border-color: #0b0b0b;
+  }
+  .gv-pair article.is-gold p,
+  .gv-pair article.is-gold li {
+    color: rgba(255, 255, 255, 0.78);
+  }
+  .gv-pair h3 {
+    margin: 0 0 10px;
+  }
+  .gv-pair p {
+    margin: 0 0 14px;
+    font-size: 0.92rem;
+    color: var(--ink-secondary);
+  }
+  @media (max-width: 900px) {
+    .gv-hero-grid,
+    .gv-pair,
+    .gv-who-list article {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

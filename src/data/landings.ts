@@ -1,4 +1,6 @@
 // src/data/landings.ts
+import { GIFT_LANDINGS } from './gift-landings';
+
 export const LOCALES = ['sk', 'en', 'ru', 'ua', 'de'] as const;
 export type Locale = (typeof LOCALES)[number];
 
@@ -51,6 +53,12 @@ export interface LandingCopy {
     microLabel: string;
     title: string;
     btn: string;
+  };
+  /** Сезонные гиды «здоровье как подарок» — та же вёрстка, отдельные иллюстрации. */
+  theme?: 'gift';
+  giftScene?: {
+    focus: 'visit' | 'hygiene' | 'checkup';
+    captions: [string, string, string];
   };
 }
 
@@ -137,7 +145,7 @@ export const UI_CHROME: Record<
   },
 };
 
-export const LANDINGS: Record<Locale, LandingCopy[]> = {
+const BASE_LANDINGS: Record<Locale, LandingCopy[]> = {
   sk: [
     {
       slug: 'bratislava-specialists',
@@ -1112,4 +1120,12 @@ export const LANDINGS: Record<Locale, LandingCopy[]> = {
       },
     },
   ],
+};
+
+export const LANDINGS: Record<Locale, LandingCopy[]> = {
+  sk: [...BASE_LANDINGS.sk, ...GIFT_LANDINGS.sk],
+  en: [...BASE_LANDINGS.en, ...GIFT_LANDINGS.en],
+  ru: [...BASE_LANDINGS.ru, ...GIFT_LANDINGS.ru],
+  ua: [...BASE_LANDINGS.ua, ...GIFT_LANDINGS.ua],
+  de: [...BASE_LANDINGS.de, ...GIFT_LANDINGS.de],
 };

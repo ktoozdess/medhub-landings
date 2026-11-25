@@ -1,5 +1,6 @@
 // src/data/bento-extras.ts
 import type { Locale } from './landings';
+import { GIFT_BENTO } from './gift-bento';
 
 export interface BentoExtras {
   visualLabels: {
@@ -26,7 +27,7 @@ export interface BentoExtras {
   };
 }
 
-export const BENTO_EXTRAS: Record<Locale, Record<string, BentoExtras>> = {
+const BASE_BENTO: Record<Locale, Record<string, BentoExtras>> = {
   sk: {
     'bratislava-specialists': {
       visualLabels: {
@@ -151,6 +152,7 @@ export const BENTO_EXTRAS: Record<Locale, Record<string, BentoExtras>> = {
         ],
       },
     },
+    ...GIFT_BENTO.sk,
   },
 
   en: {
@@ -277,6 +279,7 @@ export const BENTO_EXTRAS: Record<Locale, Record<string, BentoExtras>> = {
         ],
       },
     },
+    ...GIFT_BENTO.en,
   },
 
   ru: {
@@ -403,6 +406,7 @@ export const BENTO_EXTRAS: Record<Locale, Record<string, BentoExtras>> = {
         ],
       },
     },
+    ...GIFT_BENTO.ru,
   },
 
   ua: {
@@ -529,6 +533,7 @@ export const BENTO_EXTRAS: Record<Locale, Record<string, BentoExtras>> = {
         ],
       },
     },
+    ...GIFT_BENTO.ua,
   },
 
   de: {
@@ -655,5 +660,8 @@ export const BENTO_EXTRAS: Record<Locale, Record<string, BentoExtras>> = {
         ],
       },
     },
+    ...GIFT_BENTO.de,
   },
 };
+
+export const BENTO_EXTRAS: Record<Locale, Record<string, BentoExtras>> = BASE_BENTO;

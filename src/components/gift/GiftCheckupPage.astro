@@ -1,0 +1,338 @@
+---
+import type { Locale, LandingCopy } from '../../data/landings';
+import type { BentoExtras } from '../../data/bento-extras';
+import { GIFT_CHROME } from '../../data/gift-chrome';
+import { UI_CHROME } from '../../data/landings';
+
+interface Props {
+  locale: Locale;
+  data: LandingCopy;
+  extras: BentoExtras;
+}
+
+const { locale, data, extras } = Astro.props;
+const ui = UI_CHROME[locale];
+const chrome = GIFT_CHROME[locale].checkup;
+const days = Array.from({ length: 31 }, (_, i) => i + 1);
+const marked = new Set([7, 9, 14, 16, 21]);
+---
+
+<article class="gc-page">
+  <header class="gc-hero">
+    <div class="container">
+      <span class="micro-label">{data.microLabel}</span>
+      <h1 class="display-h1">{data.heroTitle}</h1>
+      <p class="gc-deck">{data.heroSubtitle}</p>
+      <p class="gc-byline">{data.trustText}</p>
+      <a class="hero-anchor" href="#how-it-works">{data.heroAnchor} ↓</a>
+    </div>
+  </header>
+
+  <section class="gc-letter" aria-label={chrome.letterLabel}>
+    <div class="container gc-letter-inner">
+      <span class="micro-label">{chrome.letterLabel}</span>
+      <p>{data.valueSection.text}</p>
+      <p class="gc-sign">{data.valueSection.reviewQuote}</p>
+    </div>
+  </section>
+
+  <section id="how-it-works" class="gc-manifesto">
+    <div class="container">
+      <span class="micro-label">{data.stepsSection.microLabel}</span>
+      <h2 class="section-h2">{data.stepsSection.title}</h2>
+    </div>
+    {data.stepsSection.cards.map((card) => (
+      <div class="gc-row">
+        <div class="container gc-row-inner">
+          <span>{card.num}</span>
+          <div>
+            <h3>{card.title}</h3>
+            <p>{card.desc}</p>
+          </div>
+        </div>
+      </div>
+    ))}
+  </section>
+
+  <section class="gc-cal-wrap">
+    <div class="container gc-cal-grid">
+      <div>
+        <span class="micro-label">{chrome.calendarLabel}</span>
+        <h2 class="section-h2">{extras.tabsSection.title}</h2>
+        <ul class="gc-modes">
+          {extras.tabsSection.tabs.map((tab) => (
+            <li>
+              <h3>{tab.label}</h3>
+              <p>{tab.desc}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div class="gc-cal" aria-hidden="true">
+        <div class="gc-cal-head">{chrome.month}</div>
+        <div class="gc-cal-days">
+          {days.map((d) => (
+            <span class={marked.has(d) ? 'is-mark' : ''}>
+              {d}
+              {marked.has(d) && <em>{chrome.marked}</em>}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="gc-paths">
+    <div class="container">
+      <span class="micro-label">{chrome.pathLabel}</span>
+      <h2 class="section-h2">{data.comparisonSection.title}</h2>
+    </div>
+    {data.comparisonSection.boxes.map((box, idx) => (
+      <div class:list={['gc-path', { 'is-alt': idx === 1 }]}>
+        <div class="container">
+          <h3>{box.title}</h3>
+          <p>{box.desc}</p>
+          <ul class="check-list">
+            {box.points.map((pt) => <li>{pt}</li>)}
+          </ul>
+        </div>
+      </div>
+    ))}
+  </section>
+
+  <section class="gc-faq">
+    <div class="container">
+      <span class="micro-label">FAQ</span>
+      <h2 class="section-h2">{ui.faqTitle}</h2>
+      <ol class="gc-faq-list">
+        {data.faqs.map((faq) => (
+          <li>
+            <h3>{faq.q}</h3>
+            <p>{faq.a}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="cta-banner">
+    <div class="container cta-banner-inner">
+      <div>
+        <span class="micro-label">{data.bottomCta.microLabel}</span>
+        <h2 class="section-h2" style="margin-bottom: 0;">{data.bottomCta.title}</h2>
+      </div>
+      <a class="btn-primary" href={`/${locale}${data.valueSection.ctaHrefSuffix}`}>
+        <span>{data.bottomCta.btn}</span>
+        <span class="arrow">→</span>
+      </a>
+    </div>
+  </section>
+</article>
+
+<style>
+  .gc-hero {
+    padding: 88px 0 64px;
+    background: #fff;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .gc-hero .display-h1 {
+    max-width: 16ch;
+  }
+  .gc-deck {
+    font-size: 1.25rem;
+    max-width: 42ch;
+    color: var(--ink-secondary);
+    margin: 0 0 28px;
+    line-height: 1.45;
+  }
+  .gc-byline {
+    margin: 0;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--accent-gold);
+  }
+  .gc-letter {
+    background: #f7f7f5;
+    padding: 64px 0;
+  }
+  .gc-letter-inner {
+    max-width: 720px;
+    margin-left: 24px;
+    padding-left: 28px;
+    border-left: 3px solid #d4a843;
+  }
+  .gc-letter p {
+    font-size: 1.08rem;
+    color: var(--ink-primary);
+    margin: 0 0 18px;
+  }
+  .gc-sign {
+    font-weight: 600;
+    font-size: 1rem !important;
+  }
+  .gc-manifesto {
+    padding-top: 72px;
+  }
+  .gc-manifesto .container {
+    margin-bottom: 28px;
+  }
+  .gc-row {
+    border-top: 1px solid var(--border-subtle);
+  }
+  .gc-row:last-of-type {
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .gc-row-inner {
+    display: grid;
+    grid-template-columns: 88px 1fr;
+    gap: 24px;
+    padding: 28px 24px;
+    align-items: start;
+  }
+  .gc-row-inner > span {
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+  }
+  .gc-row-inner h3 {
+    margin: 0 0 8px;
+    font-size: 1.35rem;
+    letter-spacing: -0.03em;
+  }
+  .gc-row-inner p {
+    margin: 0;
+    color: var(--ink-secondary);
+    max-width: 62ch;
+  }
+  .gc-cal-wrap {
+    padding: 72px 0;
+    background: #fafaf9;
+  }
+  .gc-cal-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 40px;
+    align-items: start;
+  }
+  .gc-modes {
+    list-style: none;
+    margin: 24px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 18px;
+  }
+  .gc-modes h3 {
+    margin: 0 0 4px;
+    font-size: 1rem;
+  }
+  .gc-modes p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--ink-secondary);
+  }
+  .gc-cal {
+    background: #fff;
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    padding: 18px;
+  }
+  .gc-cal-head {
+    font-weight: 700;
+    margin-bottom: 12px;
+    letter-spacing: -0.02em;
+  }
+  .gc-cal-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+  }
+  .gc-cal-days span {
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+    font-size: 0.78rem;
+    border-radius: 8px;
+    color: var(--ink-secondary);
+    position: relative;
+  }
+  .gc-cal-days span.is-mark {
+    background: #0b0b0b;
+    color: #fff;
+    animation: gc-pulse 2.8s ease-in-out infinite;
+  }
+  .gc-cal-days em {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .gc-path {
+    padding: 48px 0;
+    border-top: 1px solid var(--border-subtle);
+  }
+  .gc-path.is-alt {
+    background: #0b0b0b;
+    color: #fff;
+    border-top: 0;
+  }
+  .gc-path h3 {
+    margin: 0 0 10px;
+    font-size: 1.5rem;
+    letter-spacing: -0.03em;
+  }
+  .gc-path p {
+    margin: 0 0 16px;
+    max-width: 58ch;
+    color: var(--ink-secondary);
+  }
+  .gc-path.is-alt p,
+  .gc-path.is-alt li {
+    color: rgba(255, 255, 255, 0.78);
+  }
+  .gc-faq {
+    padding: 72px 0;
+  }
+  .gc-faq-list {
+    list-style: none;
+    margin: 28px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 28px;
+    counter-reset: q;
+  }
+  .gc-faq-list li {
+    counter-increment: q;
+    padding-left: 48px;
+    position: relative;
+  }
+  .gc-faq-list li::before {
+    content: counter(q, decimal-leading-zero);
+    position: absolute;
+    left: 0;
+    top: 2px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--accent-gold);
+  }
+  .gc-faq-list h3 {
+    margin: 0 0 8px;
+    font-size: 1.15rem;
+  }
+  .gc-faq-list p {
+    margin: 0;
+    color: var(--ink-secondary);
+    font-size: 0.95rem;
+  }
+  @keyframes gc-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.06); }
+  }
+  @media (max-width: 900px) {
+    .gc-cal-grid,
+    .gc-row-inner {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
